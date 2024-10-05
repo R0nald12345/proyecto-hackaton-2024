@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import ModalGrafico from './ModalGrafico'
 import ModalEleccion from './ModalEleccion';
+import ModalCapas from './ModalCapas';
 
 const Page = () =>{
   
@@ -23,6 +24,13 @@ const Page = () =>{
           onClick={()=>setOpenGrafico(true)}
           >Details</button>
       </div>
+
+      <div className='flex gap-10 justify-center'>
+
+        <ModalCapas/>
+        
+      </div>
+
 
           <ModalEleccion/>
 
