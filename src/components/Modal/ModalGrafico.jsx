@@ -1,43 +1,61 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Line } from "react-chartjs-2";
-import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
 
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
-const etiquetas = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
+const etiquetas = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+];
 const datos = {
   labels: etiquetas,
   datasets: [
     {
-      label: 'Mi primer conjunto de datos',
+      label: "Mi primer conjunto de datos",
       data: [65, 59, 80, 81, 56, 55, 40],
       fill: false,
-      borderColor: 'rgb(75, 192, 192)',
-      tension: 0.1
-    }
-  ]
+      borderColor: "rgb(75, 192, 192)",
+      tension: 0.1,
+    },
+  ],
 };
 
-
-const ModalGrafico = ({ open, onClose }) => {
-
+const ModalGrafico = ({ open, onClose, place }) => {
   if (!open) return null;
 
-  const handleNuevoEncargadoEspecialidad = async () => {
-    try {
-     
-      await onClose();
-    } catch (error) {
-      console.error("Error al Cerrar: ", error);
-    }
-  };
-
-
   return (
-    <div className=" inset-0 z-10">
-      <form
-        className="fixed top-0 m-5 right-0 max-w-lg w-11/12 max-h-[90vh] bg-white shadow-2xl rounded-2xl p-5"
-      >
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "flex-end",
+        height: "370px",
+      }}
+      className="fixed inset-0    z-50"
+    >
+      <div className="bg-white rounded-2xl p-5 max-w-lg w-11/12 max-h-[90vh] overflow-auto">
         <div className="flex justify-end">
           <button
             type="button"
@@ -47,20 +65,14 @@ const ModalGrafico = ({ open, onClose }) => {
             X
           </button>
         </div>
-        <h2 className="text-3xl font-bold text-center">
-            Grapich
-        </h2> 
+        <h2 className="text-3xl font-bold text-center">Graphic</h2>
 
         <div className="flex flex-col w-full justify-center">
-          
-
           <div className="mt-5">
             <Line data={datos} />
           </div>
-
-
         </div>
-      </form>
+      </div>
     </div>
   );
 };

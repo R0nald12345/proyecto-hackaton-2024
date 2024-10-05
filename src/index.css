@@ -1,5 +1,8 @@
-@import url("https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&family=Poppins:wght@200;300;400;500;600;700&family=Roboto:wght@100;300;400;500;700;900&display=swap");
-
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+/* @import url("https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&family=Poppins:wght@200;300;400;500;600;700&family=Roboto:wght@100;300;400;500;700;900&display=swap");
+ */
 /* CSS Reset */
 
 /* Box sizing rules */
@@ -185,6 +188,3 @@ h5,
 h6 {
   font-weight: normal;
 }
-
-@tailwind base;
-@tailwind components;

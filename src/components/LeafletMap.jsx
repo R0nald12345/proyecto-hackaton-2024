@@ -1,8 +1,6 @@
-import React, { useEffect, useState } from "react";
-
+import React, { useState } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
-
 import {
   MapContainer,
   Marker,
@@ -12,21 +10,24 @@ import {
 } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import "../styles/MapStyle.css";
-
 import { getPlace } from "../actions/place";
+import ModalGrafico from "./Modal/ModalGrafico";
+import ModalEleccion from "./Modal/ModalEleccion";
+
+import Buscador from "./Search/Buscador.jsx";
 
 const LeafletMap = ({ getPlace, loading, error, place }) => {
   const [position, setPosition] = useState([-17.783717, -63.182634]);
-
-  console.log(place);
+  const [openModalGrafico, setOpenModalGrafico] = useState(false);
 
   function LocationMarker() {
     const map = useMapEvents({
       click(e) {
-        setPosition([e.latlng.lat, e.latlng.lng]);
+        const newPosition = [e.latlng.lat, e.latlng.lng];
+        setPosition(newPosition);
         map.flyTo(e.latlng, map.getZoom());
-
-        getPlace({ position });
+        getPlace({ position: newPosition });
+        setOpenModalGrafico(true);
       },
     });
 
@@ -38,14 +39,34 @@ const LeafletMap = ({ getPlace, loading, error, place }) => {
   }
 
   return (
-    <div>
-      <div className="mapContainer">
-        <MapContainer center={position} zoom={14} scrollWheelZoom={false}>
-          <TileLayer url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}" />
-          <LocationMarker />
-        </MapContainer>
+    <>
+      <ModalGrafico
+        open={openModalGrafico}
+        position={place}
+        onClose={() => setOpenModalGrafico(false)}
+      />
+
+      <Buscador className="absolute top-4 left-4 z-0" />
+      
+      <div className="relative">
+        <ModalEleccion />
+
+        <div className="mapContainer relative">
+          <MapContainer
+            className="relative z-10"
+            center={position}
+            zoom={14}
+            scrollWheelZoom={false}
+          >
+            {/* El input de búsqueda ahora está dentro del MapContainer */}
+
+            <TileLayer url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}" />
+
+            <LocationMarker />
+          </MapContainer>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
@@ -61,5 +82,4 @@ LeafletMap.propTypes = {
   error: PropTypes.object,
   place: PropTypes.array,
 };
-
 export default connect(mapStateToProps, { getPlace })(LeafletMap);
