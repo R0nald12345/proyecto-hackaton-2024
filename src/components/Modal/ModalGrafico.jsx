@@ -18,7 +18,7 @@ const ModalGrafico = ({ open, onClose }) => {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-10">
       <form
-        className="fixed top-1/2 left-1/2 max-w-lg w-11/12 max-h-[90vh] bg-white shadow-2xl rounded-2xl p-5 -translate-x-1/2 -translate-y-1/2"
+        className="fixed top-0 m-5 right-0 max-w-lg w-11/12 max-h-[90vh] bg-white shadow-2xl rounded-2xl p-5"
       >
         <div className="flex justify-end">
           <button
