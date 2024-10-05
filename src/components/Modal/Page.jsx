@@ -5,8 +5,6 @@ import ModalEleccion from './ModalEleccion';
 const Page = () =>{
   
   const [openModalGrafico, setOpenGrafico] = useState(false);
-  const [openModalEleccion, setOpenEleccion] = useState(false);
-  
 
   return (
 
@@ -17,24 +15,16 @@ const Page = () =>{
         onClose={()=>setOpenGrafico(false)}
       />
 
-      <ModalEleccion
-        open={openModalEleccion}
-        onClose={()=>setOpenEleccion(false)}
-      />
 
-      <p className ='bg-red-500 text-clip'>Hello World</p>
 
-      <div className='flex gap-10'>
+      <div className='flex gap-10 justify-center'>
 
-        <button
+        <button className='bg-blue-500 hover:bg-blue-700 px-2 hover:text-gray-500 rounded-md font-bold cursor-pointer'
           onClick={()=>setOpenGrafico(true)}
-          >Modal1</button>
-        
-        <button
-          onClick={()=>setOpenEleccion(true)}
-        >Modal2</button>
-
+          >Details</button>
       </div>
+
+          <ModalEleccion/>
 
     </div>
   )

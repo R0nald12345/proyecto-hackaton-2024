@@ -1,8 +1,6 @@
 import React from "react";
 
-const ModalEleccion = ({ open, onClose }) => {
-  if (!open) return null;
-
+const ModalEleccion = () => {
   const handleNuevoEncargadoEspecialidad = async () => {
     try {
       await onClose();
@@ -12,31 +10,24 @@ const ModalEleccion = ({ open, onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0  bg-opacity-50 z-10">
-      <section className="fixed top-0 m-5 left-0 max-w-lg w-1/4 h-80 border-2 border-black/30 max-h-[90vh] bg-white shadow-2xl rounded-2xl p-5">
-       
-        <div className="flex justify-end">
+    <div className="bg-opacity-50 z-10">
+      <section className="fixed top-0 m-5 left-0 max-w-lg w-1/5 h-80 border-2 border-black/30 max-h-[90vh] bg-white shadow-2xl rounded-2xl p-5">
+        {/* <h2 className="text-3xl font-bold text-center ">H</h2> */}
 
-          <button
-            type="button"
-            className="bg-red-500 hover:bg-red-700 px-5 py-1 rounded-md font-bold"
-            onClick={onClose}
-          >
-            X
+        <div className="flex flex-col mt-14 space-y-2 h-52 ">
+        
+          <button className="bg-blue-700 hover:bg-blue-800 rounded-md shadow-sm text-white hover:text-gray-300 font-semibold py-1">
+            Button
           </button>
-      
-        </div>
-
-        <h2 className="text-3xl font-bold text-center">Hola modal Eleccion</h2>
-
-        <div className="flex flex-col space-y-2 h-52">
-
-            <button className="bg-blue-800 hover:bg-blue-900">Buton1</button>
-            <button className="bg-blue-800 hover:bg-blue-900">Buton2</button>
-            <button className="bg-blue-800 hover:bg-blue-900">Buton3</button>
-            <button className="bg-blue-800 hover:bg-blue-900">Buton4</button>
-            <button className="bg-blue-800 hover:bg-blue-900">Buton5</button>
-
+          <button className="bg-blue-700 hover:bg-blue-800 rounded-md shadow-sm text-white hover:text-gray-300 font-semibold py-1">
+            Button
+          </button>
+          <button className="bg-blue-700 hover:bg-blue-800 rounded-md shadow-sm text-white hover:text-gray-300 font-semibold py-1">
+            Button
+          </button>
+          <button className="bg-blue-700 hover:bg-blue-800 rounded-md shadow-sm text-white hover:text-gray-300 font-semibold py-1">
+            Button
+          </button>
         </div>
       </section>
     </div>

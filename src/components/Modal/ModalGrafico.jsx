@@ -23,26 +23,6 @@ const ModalGrafico = ({ open, onClose }) => {
 
   if (!open) return null;
 
-//   const etiquetas = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
-//   const datos = {
-//     labels: etiquetas,
-//     datasets: [
-//       {
-//         label: 'Mi primer conjunto de datos',
-//         data: [65, 59, 80, 81, 56, 55, 40],
-//         fill: false,
-//         borderColor: 'rgb(75, 192, 192)',
-//         tension: 0.1
-//       }
-//     ]
-//   };
-  
-//   const config = {
-//     type: 'line',
-//     data: datos,
-//   };
-
-
   const handleNuevoEncargadoEspecialidad = async () => {
     try {
      
@@ -54,21 +34,21 @@ const ModalGrafico = ({ open, onClose }) => {
 
 
   return (
-    <div className="fixed inset-0 z-10">
+    <div className=" inset-0 z-10">
       <form
         className="fixed top-0 m-5 right-0 max-w-lg w-11/12 max-h-[90vh] bg-white shadow-2xl rounded-2xl p-5"
       >
         <div className="flex justify-end">
           <button
             type="button"
-            className="bg-red-500 hover:bg-red-700 px-5 py-1 rounded-md font-bold"
+            className="bg-red-500 hover:bg-red-700 px-2 hover:text-white rounded-md font-bold"
             onClick={onClose}
           >
             X
           </button>
         </div>
         <h2 className="text-3xl font-bold text-center">
-          Modal Modal Grafico
+            Grapich
         </h2> 
 
         <div className="flex flex-col w-full justify-center">
