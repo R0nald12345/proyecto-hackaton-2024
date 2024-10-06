@@ -57,13 +57,17 @@ const LeafletMap = ({ getPlace, loading, error, place }) => {
 
           // Function to get color based on pixel value
           const getColor = (value) => {
-            // Adjust these thresholds and colors based on your data
-            if (value === 0) return "transparent";
-            if (value < 50) return "transparent";
-            if (value < 100) return "green";
-            if (value < 150) return "yellow";
-            if (value < 200) return "orange";
-            return "red";
+            if (value < 10) return "transparent";
+
+            // Calculate the percentage of the value within the range 10-400
+            const percentage = Math.min((value - 10) / 390, 1);
+
+            // Generate RGB values
+            const r = Math.round(255); // Red stays at max
+            const g = Math.round(255 * (1 - percentage)); // Green decreases
+            const b = Math.round(255 * (1 - percentage)); // Blue decreases
+
+            return `rgb(${r}, ${g}, ${b})`;
           };
 
           geoRasterLayer = new GeoRasterLayer({

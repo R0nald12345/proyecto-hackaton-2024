@@ -12,10 +12,10 @@ function App() {
   return (
     <>
       <div className="main-title">Hola santa cruz</div>
-      {/* {/* <LeafletMap /> */}
+      {/* <LeafletMap /> */}
       {/* <Map3D /> */}
-      <CesiumMap /> 
-        <Page/>
+      <CesiumMap />
+      {/* <Page /> */}
     </>
   );
 }

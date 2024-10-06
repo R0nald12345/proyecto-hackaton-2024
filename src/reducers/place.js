@@ -1,4 +1,9 @@
-import { GET_PLACES, GET_PLACE, REMOVE_PLACE } from "../actions/types";
+import {
+  GET_PLACES,
+  GET_PLACE,
+  REMOVE_PLACE,
+  SET_PLACE,
+} from "../actions/types";
 
 const initialState = {
   places: [],
@@ -31,6 +36,14 @@ export default function (state = initialState, action) {
       return {
         ...state,
         place: null,
+        error: null,
+        loading: false,
+      };
+
+    case SET_PLACE:
+      return {
+        ...state,
+        place: payload,
         error: null,
         loading: false,
       };

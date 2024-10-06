@@ -1,5 +1,5 @@
 import axios from "axios";
-import { GET_PLACE, GET_PLACES, REMOVE_PLACE } from "./types";
+import { GET_PLACE, GET_PLACES, REMOVE_PLACE, SET_PLACE } from "./types";
 
 export const getPlace =
   ({ position }) =>
@@ -28,5 +28,13 @@ export const getPlaces = () => async (dispatch) => {
 export const clearPlace = () => async (dispatch) => {
   dispatch({
     type: REMOVE_PLACE,
+  });
+};
+
+export const setPlace = (place) => async (dispatch) => {
+  console.log(place);
+  dispatch({
+    type: SET_PLACE,
+    payload: place,
   });
 };

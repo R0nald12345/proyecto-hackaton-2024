@@ -1,32 +1,41 @@
 import React from "react";
 
-const ModalEleccion = () => {
+const ModalEleccion = ({ yearFunction }) => {
   return (
-
     <div
       // style={{ backgroundColor: "green", marginLeft: "25px", top: "25%" }}
+      style={{ marginLeft: "30px" }}
       className="fixed z-50"
     >
-    
-      <section className="w-64 mt-[35%] h-80 border-2 border-black/30 bg-gray-400/60 shadow-2xl rounded-2xl p-5">
+      <section className="w-64 mt-[35%] h-80 border-2 border-black/30  shadow-2xl rounded-2xl p-5">
         <div className="flex flex-col mt-14 space-y-2 h-52 ">
-         
-          <button className=" py-2 bg-blue-700  hover:bg-blue-800 rounded-md shadow-sm text-white hover:text-gray-300 font-semibold">
-            Button
+          <button
+            onClick={() => yearFunction(2019)}
+            className=" py-2 bg-neutral-800  hover:bg-orange-700 rounded-md shadow-sm text-white hover:text-gray-300 font-semibold"
+          >
+            2019
           </button>
 
-          <button className="py-2 bg-blue-700 hover:bg-blue-800 rounded-md shadow-sm text-white hover:text-gray-300 font-semibold">
-            Button
+          <button
+            onClick={() => yearFunction(2020)}
+            className="py-2 bg-neutral-800 hover:bg-orange-700 rounded-md shadow-sm text-white hover:text-gray-300 font-semibold"
+          >
+            2020
           </button>
 
-          <button className="py-2 bg-blue-700 hover:bg-blue-800 rounded-md shadow-sm text-white hover:text-gray-300 font-semibold">
-            Button
+          <button
+            onClick={() => yearFunction(2021)}
+            className="py-2 bg-neutral-800 hover:bg-orange-700 rounded-md shadow-sm text-white hover:text-gray-300 font-semibold"
+          >
+            2021
           </button>
 
-          <button className="py-2 bg-blue-700 hover:bg-blue-800 rounded-md shadow-sm text-white hover:text-gray-300 font-semibold">
-            Button
+          <button
+            onClick={() => yearFunction(2022)}
+            className="py-2 bg-neutral-800 hover:bg-orange-700 rounded-md shadow-sm text-white hover:text-gray-300 font-semibold"
+          >
+            2022
           </button>
-          
         </div>
       </section>
     </div>

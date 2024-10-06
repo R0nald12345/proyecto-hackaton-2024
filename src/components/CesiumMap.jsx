@@ -9,7 +9,11 @@ import ModalEleccion from "./Modal/ModalEleccion";
 import Buscador from "./Search/Buscador.jsx";
 import * as GeoTIFF from "geotiff";
 
-import tiffExample from "../assets/example.tif";
+import tiff2019 from "../assets/Forestacion_co2_2019-12-30.tif";
+import tiff2020 from "../assets/Forestacion_co2_2020-12-26.tif";
+import tiff2021 from "../assets/Forestacion_co2_2021-12-30.tif";
+import tiff2022 from "../assets/Forestacion_co2_2022-09-30.tif";
+import ModalCapas from "./Modal/ModalCapas.jsx";
 
 Cesium.Ion.defaultAccessToken =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIxNWNkMDcyYS1iOTI3LTQ5OTEtYmRlNy04MTQyMWVjNWZkNTIiLCJpZCI6MjQ2MTYyLCJpYXQiOjE3MjgxNzU2OTh9.o2e8nIJUFQ_JIehvPGBb0ra6Jhms_qSzGYMrDv7JlY4";
@@ -19,6 +23,81 @@ const Globe3D = ({ getPlace, loading, error, place }) => {
   const viewer = useRef(null);
   const [openModalGrafico, setOpenModalGrafico] = useState(false);
   const [debugInfo, setDebugInfo] = useState("");
+
+  const [year, setYear] = useState(2019);
+  const [mapType, setMapType] = useState("default");
+  const [currentMapYear, setCurrentMapYear] = useState(tiff2019);
+
+  console.log(year);
+
+  useEffect(() => {
+    if (year === 2020) {
+      setCurrentMapYear(tiff2020);
+    } else if (year === 2021) {
+      setCurrentMapYear(tiff2021);
+    } else if (year == 2019) {
+      setCurrentMapYear(tiff2019);
+    } else {
+      setCurrentMapYear(tiff2022);
+    }
+  }, [year]);
+
+  useEffect(() => {
+    if (viewer.current) {
+      addTifOverlay();
+    }
+  }, [currentMapYear]);
+
+  function handleYear(incomingYear) {
+    setYear(incomingYear);
+  }
+
+  function handleMapType(incomingMapType) {
+    setMapType(incomingMapType);
+  }
+  console.log(mapType);
+
+  useEffect(() => {
+    if (place.length > 0) {
+      console.log(place);
+      flyTo(place[0], place[1]);
+      setOpenModalGrafico(true);
+    }
+  }, [place]);
+
+  const color_ranges_with_values = [
+    { rgb: [160, 32, 240], range: [0, 0.007621728] }, // Purple
+    { rgb: [145, 30, 220], range: [0.007621728, 0.026676049] },
+    { rgb: [130, 28, 200], range: [0.026676049, 0.053352097] },
+    { rgb: [115, 26, 180], range: [0.053352097, 0.080082146] },
+    { rgb: [100, 24, 160], range: [0.080082146, 0.115015509] },
+    { rgb: [85, 22, 140], range: [0.115015509, 0.144812836] },
+    { rgb: [70, 20, 120], range: [0.144812836, 0.182921471] },
+    { rgb: [60, 18, 110], range: [0.182921471, 0.224840982] }, // Dark Purple ends here
+    { rgb: [0, 0, 139], range: [0.224840982, 0.274382115] }, // Dark Blue starts here
+    { rgb: [0, 0, 200], range: [0.274382115, 0.327734313] }, // Blue
+    { rgb: [30, 144, 255], range: [0.327734313, 0.384897274] }, // Dodger Blue
+    { rgb: [100, 149, 237], range: [0.384897274, 0.43848846] }, // Cornflower Blue
+    { rgb: [135, 206, 250], range: [0.43848846, 0.492223972] }, // Light Sky Blue
+    { rgb: [173, 216, 230], range: [0.492223972, 0.555275495] }, // Light Blue
+    { rgb: [180, 238, 255], range: [0.555275495, 0.650972327] }, // Light Cyan
+    { rgb: [224, 255, 255], range: [0.650972327, 0.718606642] }, // Pale Turquoise
+    { rgb: [240, 255, 255], range: [0.718606642, 0.778602703] }, // Azure
+    { rgb: [255, 255, 255], range: [0.778602703, 0.776305314] }, // White
+  ];
+
+  const getColor = (value) => {
+    if (value >= 0 && value < 0.007621728) {
+      return [0, 0, 0, 0]; // Fully transparent for the first range
+    }
+
+    for (let range of color_ranges_with_values) {
+      if (value >= range.range[0] && value < range.range[1]) {
+        return [...range.rgb, 255]; // Add alpha value of 255
+      }
+    }
+    return [0, 0, 0, 0]; // Fully transparent for values outside all ranges
+  };
 
   useEffect(() => {
     if (viewer.current) return; // initialize globe only once
@@ -116,10 +195,25 @@ const Globe3D = ({ getPlace, loading, error, place }) => {
     });
   };
 
+  const clampLatitude = (latitude) => {
+    const minLatitude = -90 + Cesium.Math.EPSILON5;
+    const maxLatitude = 90 - Cesium.Math.EPSILON5;
+    return Math.max(minLatitude, Math.min(maxLatitude, latitude));
+  };
+
+  const clampLongitude = (longitude) => {
+    const minLongitude = -180 + Cesium.Math.EPSILON5;
+    const maxLongitude = 180 - Cesium.Math.EPSILON5;
+    return Math.max(minLongitude, Math.min(maxLongitude, longitude));
+  };
+
   const addTifOverlay = async () => {
     try {
+      // Clear existing overlay
+      viewer.current.entities.removeAll();
+
       console.log("Fetching TIF file...");
-      const response = await fetch(tiffExample);
+      const response = await fetch(currentMapYear);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -173,15 +267,24 @@ const Globe3D = ({ getPlace, loading, error, place }) => {
       const width = image.getWidth();
       const height = image.getHeight();
 
-      const west = geoTransform[0];
-      const north = geoTransform[3];
-      const east = west + width * geoTransform[1];
-      const south = north + height * geoTransform[5];
+      let west = geoTransform[0];
+      let north = geoTransform[3];
+      let east = west + width * geoTransform[1];
+      let south = north + height * geoTransform[5];
 
       console.log("Calculated bounds:", { west, south, east, north });
 
+      // Clamp latitude and longitude values
+      west = clampLongitude(west);
+      east = clampLongitude(east);
+      south = clampLatitude(south);
+      north = clampLatitude(north);
+
+      console.log("Clamped bounds:", { west, south, east, north });
+
       const rectangle = Cesium.Rectangle.fromDegrees(west, south, east, north);
 
+      // Create canvas and populate it with image data
       const canvasElement = document.createElement("canvas");
       canvasElement.width = width;
       canvasElement.height = height;
@@ -189,89 +292,16 @@ const Globe3D = ({ getPlace, loading, error, place }) => {
 
       const imageData = context.createImageData(width, height);
 
-      if (rasters.length < 3) {
-        console.warn(
-          `Expected at least 3 raster bands, but got ${rasters.length}. Using available bands.`
-        );
-      }
-
-      const band1 = rasters[0] || new Array(width * height).fill(0);
-      const band2 = rasters[1] || band1;
-      const band3 = rasters[2] || band1;
-
-      const transparencyThreshold = 0;
-
-      // Function to map value to color using a rainbow-like scale
-      const getColor = (value) => {
-        const hue = (1 - value) * 240; // Maps 0 to 240 (blue) and 1 to 0 (red)
-        return hslToRgb(hue / 360, 1, 0.5);
-      };
-
-      // Helper function to convert HSL to RGB
-      const hslToRgb = (h, s, l) => {
-        let r, g, b;
-
-        if (s === 0) {
-          r = g = b = l; // achromatic
-        } else {
-          const hue2rgb = (p, q, t) => {
-            if (t < 0) t += 1;
-            if (t > 1) t -= 1;
-            if (t < 1 / 6) return p + (q - p) * 6 * t;
-            if (t < 1 / 2) return q;
-            if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
-            return p;
-          };
-
-          const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-          const p = 2 * l - q;
-          r = hue2rgb(p, q, h + 1 / 3);
-          g = hue2rgb(p, q, h);
-          b = hue2rgb(p, q, h - 1 / 3);
-        }
-
-        return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
-      };
-
-      // Efficiently find min and max values
-      let minValue = Infinity;
-      let maxValue = -Infinity;
+      // Assuming single-band data for simplicity
+      // Adjust this part based on your actual data structure
+      const band = rasters[0];
 
       for (let i = 0; i < width * height; i++) {
-        const value = (band1[i] + band2[i] + band3[i]) / 3;
-        minValue = Math.min(minValue, value);
-        maxValue = Math.max(maxValue, value);
-      }
-
-      console.log("Min value:", minValue, "Max value:", maxValue);
-
-      for (let i = 0; i < width * height; i++) {
-        const r = band1[i];
-        const g = band2[i];
-        const b = band3[i];
-
-        // Check if the pixel should be transparent
-        if (
-          r <= transparencyThreshold &&
-          g <= transparencyThreshold &&
-          b <= transparencyThreshold
-        ) {
-          // Set fully transparent
-          imageData.data[i * 4] = 0;
-          imageData.data[i * 4 + 1] = 0;
-          imageData.data[i * 4 + 2] = 0;
-          imageData.data[i * 4 + 3] = 0;
-        } else {
-          // Normalize the average value and get the corresponding color
-          const avgValue = (r + g + b) / 3;
-          const normalizedValue = (avgValue - minValue) / (maxValue - minValue);
-          const [red, green, blue] = getColor(normalizedValue);
-
-          imageData.data[i * 4] = red;
-          imageData.data[i * 4 + 1] = green;
-          imageData.data[i * 4 + 2] = blue;
-          imageData.data[i * 4 + 3] = 255; // Full opacity
-        }
+        const [red, green, blue, alpha] = getColor(band[i]);
+        imageData.data[i * 4] = red;
+        imageData.data[i * 4 + 1] = green;
+        imageData.data[i * 4 + 2] = blue;
+        imageData.data[i * 4 + 3] = alpha;
       }
 
       context.putImageData(imageData, 0, 0);
@@ -308,6 +338,13 @@ const Globe3D = ({ getPlace, loading, error, place }) => {
 
   return (
     <>
+      <div
+        style={{ position: "fixed", zIndex: "10", right: "10px" }}
+        className="flex gap-10 justify-center"
+      >
+        <ModalCapas handleMapType={handleMapType} />
+      </div>
+      <ModalEleccion yearFunction={handleYear} />
       <ModalGrafico
         open={openModalGrafico}
         position={place}
@@ -319,8 +356,6 @@ const Globe3D = ({ getPlace, loading, error, place }) => {
       </div>
 
       <div className="relative">
-        <ModalEleccion />
-
         <div ref={globeContainer} style={{ height: "100vh", width: "100%" }} />
       </div>
 
