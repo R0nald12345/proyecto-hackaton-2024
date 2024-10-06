@@ -16,6 +16,7 @@ import GeoRasterLayer from "georaster-layer-for-leaflet";
 
 const LeafletMap = ({ getPlace, loading, error, place }) => {
   const [position, setPosition] = useState([-17.783717, -63.182634]);
+
   const [openModalGrafico, setOpenModalGrafico] = useState(false);
 
   console.log("tiffExample:", tiffExample);

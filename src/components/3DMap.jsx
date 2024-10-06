@@ -7,6 +7,7 @@ import { getPlace } from "../actions/place";
 import ModalGrafico from "./Modal/ModalGrafico";
 import ModalEleccion from "./Modal/ModalEleccion";
 import Buscador from "./Search/Buscador.jsx";
+import ModalInfoCountry from "./Modal/ModalInfoCountry.jsx";
 
 // You need to replace this with your actual Mapbox access token
 mapboxgl.accessToken =
@@ -19,6 +20,8 @@ const Map3D = ({ getPlace, loading, error, place }) => {
   const [lat, setLat] = useState(-17.783717);
   const [zoom, setZoom] = useState(14);
   const [openModalGrafico, setOpenModalGrafico] = useState(false);
+
+ 
 
   useEffect(() => {
     if (map.current) return; // initialize map only once
@@ -80,7 +83,7 @@ const Map3D = ({ getPlace, loading, error, place }) => {
       setLng(newPosition[0]);
       setLat(newPosition[1]);
       getPlace({ position: newPosition });
-      setOpenModalGrafico(true);
+
     });
   }, [getPlace]);
 
@@ -93,6 +96,13 @@ const Map3D = ({ getPlace, loading, error, place }) => {
       />
 
       <Buscador className="absolute top-4 left-4 z-10" />
+
+      <ModalInfoCountry
+        open={openModalGraficoInfo}
+        onClose={() => setOpenGraficoInfo(false)}
+        place={place}
+      />
+
 
       <div className="relative">
         <ModalEleccion />

@@ -7,12 +7,18 @@ import Buscador from "../Search/Buscador";
 const Page = () => {
   const [openModalGrafico, setOpenGrafico] = useState(false);
 
+
   return (
     <div>
       <ModalGrafico
         open={openModalGrafico}
         onClose={() => setOpenGrafico(false)}
       />
+
+      {/* <ModalInfoCountry
+        open={openModalGrafico}
+        onClose={() => setOpenGrafico(false)}
+      /> */}
 
       <div className="flex gap-10 justify-center">
         <button

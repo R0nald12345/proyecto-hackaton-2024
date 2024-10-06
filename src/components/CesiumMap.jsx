@@ -14,6 +14,7 @@ import tiff2020 from "../assets/Forestacion_co2_2020-12-26.tif";
 import tiff2021 from "../assets/Forestacion_co2_2021-12-30.tif";
 import tiff2022 from "../assets/Forestacion_co2_2022-09-30.tif";
 import ModalCapas from "./Modal/ModalCapas.jsx";
+import ModalInfoCountry from "./Modal/ModalInfoCountry.jsx";
 
 Cesium.Ion.defaultAccessToken =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIxNWNkMDcyYS1iOTI3LTQ5OTEtYmRlNy04MTQyMWVjNWZkNTIiLCJpZCI6MjQ2MTYyLCJpYXQiOjE3MjgxNzU2OTh9.o2e8nIJUFQ_JIehvPGBb0ra6Jhms_qSzGYMrDv7JlY4";
@@ -22,6 +23,7 @@ const Globe3D = ({ getPlace, loading, error, place }) => {
   const globeContainer = useRef(null);
   const viewer = useRef(null);
   const [openModalGrafico, setOpenModalGrafico] = useState(false);
+
   const [debugInfo, setDebugInfo] = useState("");
 
   const [year, setYear] = useState(2019);
@@ -55,11 +57,9 @@ const Globe3D = ({ getPlace, loading, error, place }) => {
   function handleMapType(incomingMapType) {
     setMapType(incomingMapType);
   }
-  console.log(mapType);
 
   useEffect(() => {
     if (place.length > 0) {
-      console.log(place);
       flyTo(place[0], place[1]);
       setOpenModalGrafico(true);
     }
@@ -104,7 +104,6 @@ const Globe3D = ({ getPlace, loading, error, place }) => {
 
     const initViewer = async () => {
       try {
-        console.log("Initializing Cesium viewer...");
         viewer.current = new Cesium.Viewer(globeContainer.current, {
           terrainProvider: await Cesium.createWorldTerrainAsync(),
           geocoder: false,
@@ -116,7 +115,6 @@ const Globe3D = ({ getPlace, loading, error, place }) => {
           timeline: false,
           fullscreenButton: false,
         });
-        console.log("Cesium viewer initialized successfully");
 
         // Set up click event handler
         const handler = new Cesium.ScreenSpaceEventHandler(
@@ -162,10 +160,8 @@ const Globe3D = ({ getPlace, loading, error, place }) => {
 
         // Wait for the globe to be fully loaded before adding the TIF overlay
         await waitForGlobeToLoad(viewer.current);
-        console.log("Globe fully loaded. Adding TIF overlay...");
         await addTifOverlay();
       } catch (error) {
-        console.error("Error initializing Cesium viewer:", error);
         setDebugInfo(`Error: ${error.message}`);
       }
     };
@@ -184,9 +180,7 @@ const Globe3D = ({ getPlace, loading, error, place }) => {
       const tilesLoadedEvent = viewer.scene.globe.tileLoadProgressEvent;
       const removeListener = tilesLoadedEvent.addEventListener(
         (queuedTileCount) => {
-          console.log(`Tiles remaining: ${queuedTileCount}`);
           if (queuedTileCount === 0) {
-            console.log("All tiles loaded.");
             removeListener();
             resolve();
           }
@@ -212,47 +206,32 @@ const Globe3D = ({ getPlace, loading, error, place }) => {
       // Clear existing overlay
       viewer.current.entities.removeAll();
 
-      console.log("Fetching TIF file...");
       const response = await fetch(currentMapYear);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      console.log("TIF file fetched successfully");
 
       const arrayBuffer = await response.arrayBuffer();
-      console.log("ArrayBuffer created, size:", arrayBuffer.byteLength);
 
       const tiff = await GeoTIFF.fromArrayBuffer(arrayBuffer);
-      console.log("GeoTIFF parsed successfully");
 
       const image = await tiff.getImage();
-      console.log(
-        "Image retrieved, dimensions:",
-        image.getWidth(),
-        "x",
-        image.getHeight()
-      );
 
       const rasters = await image.readRasters();
-      console.log("Rasters read, count:", rasters.length);
 
       const tiePoints = image.getTiePoints();
-      console.log("Tie points:", tiePoints);
       if (!tiePoints || tiePoints.length === 0) {
         throw new Error("No tie points found in the GeoTIFF");
       }
 
       const tiepoint = tiePoints[0];
-      console.log("First tie point:", tiepoint);
 
       const fileDirectory = image.getFileDirectory();
-      console.log("File directory:", fileDirectory);
       if (!fileDirectory.ModelPixelScale) {
         throw new Error("ModelPixelScale not found in the file directory");
       }
 
       const pixelScale = fileDirectory.ModelPixelScale;
-      console.log("Pixel scale:", pixelScale);
 
       const geoTransform = [
         tiepoint.x,
@@ -262,7 +241,6 @@ const Globe3D = ({ getPlace, loading, error, place }) => {
         0,
         -1 * pixelScale[1],
       ];
-      console.log("Geographic information retrieved:", geoTransform);
 
       const width = image.getWidth();
       const height = image.getHeight();
@@ -272,15 +250,11 @@ const Globe3D = ({ getPlace, loading, error, place }) => {
       let east = west + width * geoTransform[1];
       let south = north + height * geoTransform[5];
 
-      console.log("Calculated bounds:", { west, south, east, north });
-
       // Clamp latitude and longitude values
       west = clampLongitude(west);
       east = clampLongitude(east);
       south = clampLatitude(south);
       north = clampLatitude(north);
-
-      console.log("Clamped bounds:", { west, south, east, north });
 
       const rectangle = Cesium.Rectangle.fromDegrees(west, south, east, north);
 
@@ -318,10 +292,7 @@ const Globe3D = ({ getPlace, loading, error, place }) => {
       viewer.current.camera.flyTo({
         destination: rectangle,
       });
-
-      console.log("TIF overlay added successfully");
     } catch (error) {
-      console.error("Error adding TIF overlay:", error);
       setDebugInfo(
         `Error adding TIF overlay: ${error.message}\nStack: ${error.stack}`
       );
@@ -345,11 +316,18 @@ const Globe3D = ({ getPlace, loading, error, place }) => {
         <ModalCapas handleMapType={handleMapType} />
       </div>
       <ModalEleccion yearFunction={handleYear} />
+
       <ModalGrafico
         open={openModalGrafico}
         position={place}
         onClose={() => setOpenModalGrafico(false)}
       />
+
+      {/* <ModalInfoCountry
+        open={openModalGraficoInfo}
+        onClose={() => setOpenGraficoInfo(false)}
+        place={place}
+      /> */}
 
       <div className="absolute top-4 left-4 z-10">
         <Buscador onSearch={(lat, lon) => flyTo(lat, lon)} />
