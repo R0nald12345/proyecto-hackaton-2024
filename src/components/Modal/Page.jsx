@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import ModalGrafico from './ModalGrafico'
 import ModalEleccion from './ModalEleccion';
 import ModalCapas from './ModalCapas';
+import Buscador from '../Search/Buscador';
 
 const Page = () =>{
   
@@ -24,11 +25,12 @@ const Page = () =>{
           onClick={()=>setOpenGrafico(true)}
           >Details</button>
       </div>
+      <Buscador/>
 
       <div className='flex gap-10 justify-center'>
 
         <ModalCapas/>
-        
+
       </div>
 
 

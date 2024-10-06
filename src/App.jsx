@@ -11,10 +11,6 @@ function App() {
       <div className="main-title">Hola santa cruz</div>
       {/* <LeafletMap /> */}
         <Page/>
-
-
-
-
     </>
   );
 }
