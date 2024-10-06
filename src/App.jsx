@@ -2,6 +2,7 @@ import React from "react";
 import LeafletMap from "./components/LeafletMap";
 
 import "./styles/GeneralStyles.css";
+import "cesium/Build/Cesium/Widgets/widgets.css";
 
 function App() {
   return (
